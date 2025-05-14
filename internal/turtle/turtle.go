@@ -16,6 +16,10 @@ type Turtle struct {
 	stepDrawer StepDrawer
 }
 
+/*
+Mover is an interface that provides methods to draw with the turtle, like move forward,
+turn left, right and so on. Used mostly in concrete implementations.
+*/
 type Mover interface {
 	Forward(distance float32)
 	Left(angle float64)
@@ -30,6 +34,10 @@ type Mover interface {
 	MaxSteps() int
 }
 
+/*
+Drawer interface is used to actually render the drawing on the screen with some specific renderer.
+Provides access to lines using Lines getter and to the method that generates next step - NextStep
+*/
 type Drawer interface {
 	NextStep()
 
@@ -37,6 +45,10 @@ type Drawer interface {
 	Color() color.Color
 }
 
+/*
+StepDrawer provides only one method to generate the next step of the turtle drawing.
+Should be implemented in concrete realisation.
+*/
 type StepDrawer interface {
 	Step(turtle Mover)
 }
