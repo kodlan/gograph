@@ -6,31 +6,83 @@ import (
 )
 
 type Turtle struct {
-	x, y  float64
-	angle float64
-	draw  bool
-	color color.Color
-	lines [][4]float64
+	x, y     float32
+	angle    float64
+	draw     bool
+	color    color.Color
+	lines    [][4]float32
+	step     int
+	maxSteps int
 }
 
 type Mover interface {
-	Forward(distance float64)
-	Up()
-	Down()
+	Forward(distance float32)
 	Left(angle float64)
 	Right(angle float64)
+	Up()
+	Down()
+
+	SetColor(c color.Color)
+	IncStep()
+
+	Step() int
+	MaxSteps() int
+	Lines() [][4]float32
+	Color() color.Color
+}
+
+type Step interface {
+	Step(turtle Mover)
 }
 
 var _ Mover = (*Turtle)(nil)
 
-func NewTurtle(x, y float64) *Turtle {
+func NewTurtle(x, y float32) *Turtle {
 	return &Turtle{
-		x:     x,
-		y:     y,
-		angle: 0,
-		draw:  true,
-		color: color.White,
+		x:        x,
+		y:        y,
+		angle:    0,
+		draw:     true,
+		color:    color.White,
+		step:     0,
+		maxSteps: 360,
 	}
+}
+
+func NewTurtleWithSteps(x, y float32, maxSteps int) *Turtle {
+	return &Turtle{
+		x:        x,
+		y:        y,
+		angle:    0,
+		draw:     true,
+		color:    color.White,
+		step:     0,
+		maxSteps: maxSteps,
+	}
+}
+
+func (t *Turtle) Color() color.Color {
+	return t.color
+}
+
+func (t *Turtle) Lines() [][4]float32 {
+	return t.lines
+}
+
+func (t *Turtle) IncStep() {
+	t.step++
+}
+
+func (t *Turtle) SetColor(c color.Color) {
+	t.color = c
+}
+
+func (t *Turtle) MaxSteps() int {
+	return t.maxSteps
+}
+
+func (t *Turtle) Step() int {
+	return t.step
 }
 
 func (t *Turtle) Up() {
@@ -41,12 +93,12 @@ func (t *Turtle) Down() {
 	t.draw = true
 }
 
-func (t *Turtle) Forward(distance float64) {
-	newX := t.x + math.Cos(t.angle)*distance
-	newY := t.y + math.Sin(t.angle)*distance
+func (t *Turtle) Forward(distance float32) {
+	newX := t.x + float32(math.Cos(t.angle))*distance
+	newY := t.y + float32(math.Sin(t.angle))*distance
 
 	if t.draw {
-		t.lines = append(t.lines, [4]float64{t.x, t.y, newX, newY})
+		t.lines = append(t.lines, [4]float32{t.x, t.y, newX, newY})
 	}
 
 	t.x, t.y = newX, newY
