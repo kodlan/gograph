@@ -15,8 +15,6 @@ func (s *Spiral) Step(turtle turtle.Mover) {
 
 	turtle.Forward(0.3 + float32(turtle.Step())*0.3)
 	turtle.Left(math.Pi / 6.)
-
-	turtle.IncStep()
 }
 
 func NewSpiral() *Spiral {

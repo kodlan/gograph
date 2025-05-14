@@ -138,4 +138,5 @@ func (t *Turtle) NextStep() {
 	}
 
 	t.stepDrawer.Step(t)
+	t.IncStep()
 }
