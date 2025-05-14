@@ -6,13 +6,14 @@ import (
 )
 
 type Turtle struct {
-	x, y     float32
-	angle    float64
-	draw     bool
-	color    color.Color
-	lines    [][4]float32
-	step     int
-	maxSteps int
+	x, y       float32
+	angle      float64
+	draw       bool
+	color      color.Color
+	lines      [][4]float32
+	step       int
+	maxSteps   int
+	stepDrawer StepDrawer
 }
 
 type Mover interface {
@@ -27,37 +28,44 @@ type Mover interface {
 
 	Step() int
 	MaxSteps() int
+}
+
+type Drawer interface {
+	NextStep()
+
 	Lines() [][4]float32
 	Color() color.Color
 }
 
-type Step interface {
+type StepDrawer interface {
 	Step(turtle Mover)
 }
 
 var _ Mover = (*Turtle)(nil)
 
-func NewTurtle(x, y float32) *Turtle {
+func NewTurtle(x, y float32, stepDrawer StepDrawer) *Turtle {
 	return &Turtle{
-		x:        x,
-		y:        y,
-		angle:    0,
-		draw:     true,
-		color:    color.White,
-		step:     0,
-		maxSteps: 360,
+		x:          x,
+		y:          y,
+		angle:      0,
+		draw:       true,
+		color:      color.White,
+		step:       0,
+		maxSteps:   360,
+		stepDrawer: stepDrawer,
 	}
 }
 
-func NewTurtleWithSteps(x, y float32, maxSteps int) *Turtle {
+func NewTurtleWithMaxSteps(x, y float32, maxSteps int, stepDrawer StepDrawer) *Turtle {
 	return &Turtle{
-		x:        x,
-		y:        y,
-		angle:    0,
-		draw:     true,
-		color:    color.White,
-		step:     0,
-		maxSteps: maxSteps,
+		x:          x,
+		y:          y,
+		angle:      0,
+		draw:       true,
+		color:      color.White,
+		step:       0,
+		maxSteps:   maxSteps,
+		stepDrawer: stepDrawer,
 	}
 }
 
@@ -110,4 +118,12 @@ func (t *Turtle) Left(angle float64) {
 
 func (t *Turtle) Right(angle float64) {
 	t.angle -= angle
+}
+
+func (t *Turtle) NextStep() {
+	if t.Step() > t.MaxSteps() {
+		return
+	}
+
+	t.stepDrawer.Step(t)
 }

@@ -12,22 +12,18 @@ import (
 const (
 	windowWidth  = 1024
 	windowHeight = 768
+	centerX      = windowWidth / 2
+	centerY      = windowHeight / 2
 )
 
 type Game struct {
 	windowWidth  int
 	windowHeight int
-	turtle       turtle.Mover
-	step         turtle.Step
+	turtle       turtle.Drawer
 }
 
 func (g *Game) Update() error {
-	if g.turtle.Step() > g.turtle.MaxSteps() {
-		return nil
-	}
-
-	g.step.Step(g.turtle)
-
+	g.turtle.NextStep()
 	return nil
 }
 
@@ -43,12 +39,11 @@ func (g *Game) Layout(int, int) (screenWidth int, screenHeight int) {
 	return g.windowWidth, g.windowHeight
 }
 
-func NewGame() *Game {
+func NewGame(stepDrawer turtle.StepDrawer) *Game {
 	return &Game{
 		windowWidth:  windowWidth,
 		windowHeight: windowHeight,
-		turtle:       turtle.NewTurtle(windowWidth/2, windowHeight/2),
-		step:         samples.NewSpiral(),
+		turtle:       turtle.NewTurtle(centerX, centerY, stepDrawer),
 	}
 }
 
@@ -56,7 +51,9 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle("Go Graph demo")
 
-	var game = NewGame()
+	var stepDrawer = samples.NewSpiral()
+
+	var game = NewGame(stepDrawer)
 
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
