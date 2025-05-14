@@ -16,7 +16,7 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle("Go Graph demo")
 
-	var stepDrawer = samples.NewSpiral()
+	var stepDrawer = samples.NewStars()
 	var g = game.NewGame(windowWidth, windowHeight, stepDrawer)
 
 	if err := ebiten.RunGame(g); err != nil {
