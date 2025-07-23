@@ -7,7 +7,7 @@ import (
 
 type Turtle struct {
 	x, y       float32
-	angle      float64
+	angle      float32
 	draw       bool
 	color      color.Color
 	lines      [][4]float32
@@ -22,8 +22,12 @@ turn left, right and so on. Used mostly in concrete implementations.
 */
 type Mover interface {
 	Forward(distance float32)
-	Left(angle float64)
-	Right(angle float64)
+
+	Left(rad float32)
+	LeftAngle(angle float32)
+	Right(rad float32)
+	RightAngle(angle float32)
+
 	Up()
 	Down()
 
@@ -114,8 +118,8 @@ func (t *Turtle) Down() {
 }
 
 func (t *Turtle) Forward(distance float32) {
-	newX := t.x + float32(math.Cos(t.angle))*distance
-	newY := t.y + float32(math.Sin(t.angle))*distance
+	newX := t.x + float32(math.Cos(float64(t.angle)))*distance
+	newY := t.y + float32(math.Sin(float64(t.angle)))*distance
 
 	if t.draw {
 		t.lines = append(t.lines, [4]float32{t.x, t.y, newX, newY})
@@ -124,11 +128,11 @@ func (t *Turtle) Forward(distance float32) {
 	t.x, t.y = newX, newY
 }
 
-func (t *Turtle) Left(angle float64) {
+func (t *Turtle) Left(angle float32) {
 	t.angle += angle
 }
 
-func (t *Turtle) Right(angle float64) {
+func (t *Turtle) Right(angle float32) {
 	t.angle -= angle
 }
 
@@ -139,4 +143,16 @@ func (t *Turtle) NextStep() {
 
 	t.stepDrawer.Step(t)
 	t.IncStep()
+}
+
+func AngleToRad(angle float32) float32 {
+	return angle * math.Pi / 180.0
+}
+
+func (t *Turtle) LeftAngle(angle float32) {
+	t.Left(AngleToRad(angle))
+}
+
+func (t *Turtle) RightAngle(angle float32) {
+	t.Right(AngleToRad(angle))
 }
